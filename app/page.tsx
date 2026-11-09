@@ -6,18 +6,22 @@ import CinemaMarqueeTicker from '@/components/CinemaMarqueeTicker';
 import LoginForm, { UserSession } from '@/components/LoginForm';
 import CinemaTicketCard from '@/components/CinemaTicketCard';
 import CinemaLoungePreview from '@/components/CinemaLoungePreview';
-import { Film, Sparkles, Clapperboard, X, CheckCircle2, Ticket } from 'lucide-react';
+import SupabaseConnectionModal from '@/components/SupabaseConnectionModal';
+import { logoutCinephile } from '@/lib/supabaseClient';
+import { Film, Sparkles, Clapperboard, X, Ticket, Database } from 'lucide-react';
 
 export default function CinemaLoginPage() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [showSupabaseModal, setShowSupabaseModal] = useState(false);
   const [viewMode, setViewMode] = useState<'form' | 'ticket'>('form');
 
   const handleLoginSuccess = (user: UserSession) => {
     setCurrentUser(user);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutCinephile();
     setCurrentUser(null);
   };
 
@@ -26,10 +30,11 @@ export default function CinemaLoginPage() {
       {/* Dynamic Theatrical Background: Projector Beam, Dust Particles, 35mm Film Strips, Theater Horizon */}
       <CinemaBackground showFilmStrips={true} />
 
-      {/* Top Header Marquee Bar with Sound Synthesizer & Ticket shortcut */}
+      {/* Top Header Marquee Bar with Sound Synthesizer, Supabase status & Ticket shortcut */}
       <CinemaMarqueeTicker
         onToggleTicketModal={() => setShowTicketModal(true)}
         showTicketButton={!currentUser}
+        onOpenSupabaseModal={() => setShowSupabaseModal(true)}
       />
 
       {/* Main Center Stage */}
@@ -45,7 +50,7 @@ export default function CinemaLoginPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#121218] border border-[#FF6B00]/40 text-xs font-mono text-[#FFB800] cinema-glow-secondary">
                 <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
                 <span className="font-bold tracking-wider uppercase">
-                  PORTAL DO CINÉFILO • SESSÃO THEATRICAL
+                  PORTAL DO CINÉFILO • SUPABASE AUTH
                 </span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E50914] animate-ping" />
               </div>
@@ -59,7 +64,7 @@ export default function CinemaLoginPage() {
               </h1>
 
               <p className="text-sm sm:text-base text-[#9E9EA8] max-w-xl mx-auto font-sans leading-relaxed">
-                Autentique seu bilhete digital para explorar estreias em 4K, restaurações em 35mm e a seleção curada de grandes diretores.
+                Autenticação de usuários e cadastro via Supabase. Guarde sua poltrona exclusiva e acesse o catálogo completo em 4K.
               </p>
 
               {/* View mode toggle on mobile / tablet */}
@@ -103,6 +108,7 @@ export default function CinemaLoginPage() {
                 <LoginForm
                   onLoginSuccess={handleLoginSuccess}
                   onPreviewTicket={() => setShowTicketModal(true)}
+                  onOpenSupabaseModal={() => setShowSupabaseModal(true)}
                 />
               </div>
 
@@ -133,14 +139,18 @@ export default function CinemaLoginPage() {
                     isAdmitted={false}
                   />
 
-                  {/* Highlights Pill */}
-                  <div className="mt-4 p-3 rounded-xl bg-[#121218]/80 border border-[#5C5C6B]/30 text-xs text-[#9E9EA8] flex items-center justify-between font-mono">
-                    <span className="flex items-center gap-1.5 text-[#FF6B00]">
-                      <Clapperboard className="w-4 h-4" />
-                      <span>24 FPS NATIVO</span>
-                    </span>
-                    <span className="text-[#FFB800]">RESTAURAÇÃO 4K</span>
-                    <span className="text-[#E50914]">CORRECÃO DCI-P3</span>
+                  {/* Supabase integration card */}
+                  <div className="mt-4 p-3.5 rounded-xl bg-[#121218]/90 border border-[#FF6B00]/30 text-xs text-[#9E9EA8] flex items-center justify-between font-mono">
+                    <div className="flex items-center gap-2 text-[#FF6B00]">
+                      <Database className="w-4 h-4" />
+                      <span className="font-bold">SUPABASE POSTGRES</span>
+                    </div>
+                    <button
+                      onClick={() => setShowSupabaseModal(true)}
+                      className="text-[#FFB800] hover:underline text-[11px] font-bold"
+                    >
+                      Ver Variáveis →
+                    </button>
                   </div>
                 </div>
               </div>
@@ -168,6 +178,12 @@ export default function CinemaLoginPage() {
           </div>
         </div>
       )}
+
+      {/* Supabase Connection Details & Variables Modal */}
+      <SupabaseConnectionModal
+        isOpen={showSupabaseModal}
+        onClose={() => setShowSupabaseModal(false)}
+      />
 
       {/* Bottom spacer for quotes ticker */}
       <div className="h-8" />

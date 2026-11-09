@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Film, Sparkles, Popcorn, Ticket } from 'lucide-react';
+import { Film, Sparkles, Popcorn, Ticket, Database } from 'lucide-react';
 import CinemaProjectorAudio from './CinemaProjectorAudio';
 
 interface CinemaMarqueeTickerProps {
   onToggleTicketModal?: () => void;
   showTicketButton?: boolean;
+  onOpenSupabaseModal?: () => void;
 }
 
 const CINEMA_QUOTES = [
@@ -21,6 +22,7 @@ const CINEMA_QUOTES = [
 export default function CinemaMarqueeTicker({
   onToggleTicketModal,
   showTicketButton = true,
+  onOpenSupabaseModal,
 }: CinemaMarqueeTickerProps) {
   return (
     <>
@@ -51,7 +53,20 @@ export default function CinemaMarqueeTicker({
           </div>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Supabase status/modal button */}
+            {onOpenSupabaseModal && (
+              <button
+                type="button"
+                onClick={onOpenSupabaseModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A1A24] hover:bg-[#252533] border border-[#FF6B00]/40 text-[#FF6B00] hover:text-[#FFB800] text-xs font-mono font-bold tracking-wider transition cursor-pointer"
+                title="Configurações e Variáveis do Supabase"
+              >
+                <Database className="w-3.5 h-3.5 text-[#FF6B00]" />
+                <span className="hidden md:inline">SUPABASE</span>
+              </button>
+            )}
+
             {/* Ambient Audio Synthesizer */}
             <CinemaProjectorAudio />
 
