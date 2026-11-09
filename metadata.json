@@ -1,0 +1,6 @@
+{
+  "name": "Obsidian Cinema - Login",
+  "description": "Tela inicial de login cinematográfica com estética Obsidian, iluminação de projetor, película 35mm e paleta preto, laranja, amarelo e vermelho.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
